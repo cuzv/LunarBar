@@ -441,12 +441,32 @@ private extension AppMainVC {
   }
 
   var menuItemOpenDateTime: NSMenuItem {
-    let item = NSMenuItem(title: Localized.UI.menuTitleOpenDateTime)
-    item.addAction { [weak self] in
+    let menu = NSMenu()
+    menu.addItem(withTitle: Localized.UI.menuTitleFollowSystemTimeZone) {
+      AppPreferences.General.fixedTimeZone = nil
+    }
+    .setOn(AppPreferences.General.fixedTimeZone == nil)
+
+    let offsetMenu = NSMenu()
+    FixedTimeZone.all.forEach { fixedTimeZone in
+      offsetMenu.addItem(withTitle: fixedTimeZone.displayName) {
+        AppPreferences.General.fixedTimeZone = fixedTimeZone
+      }
+      .setOn(AppPreferences.General.fixedTimeZone == fixedTimeZone)
+    }
+
+    let offsetItem = NSMenuItem(title: Localized.UI.menuTitleUTCOffset)
+    offsetItem.submenu = offsetMenu
+    menu.addItem(offsetItem)
+    menu.addSeparator()
+
+    menu.addItem(withTitle: Localized.UI.menuTitleOpenDateTime) { [weak self] in
       self?.closePopover()
       NSWorkspace.shared.safelyOpenURL(string: "x-apple.systempreferences:com.apple.preference.datetime")
     }
 
+    let item = NSMenuItem(title: Localized.UI.menuTitleDateTime)
+    item.submenu = menu
     return item
   }
 

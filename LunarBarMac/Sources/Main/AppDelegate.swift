@@ -23,6 +23,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private var countingDate: Date?
 
   func applicationDidFinishLaunching(_ notification: Notification) {
+    applyConfiguredTimeZone()
+
     // We rely on tooltips to display information, change the initial delay to 1s to be faster
     UserDefaults.standard.set(1000, forKey: "NSInitialToolTipDelay")
 
@@ -135,6 +137,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       name: .menuBarIconDidChange,
       object: nil
     )
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(systemTimeZoneDidChange(_:)),
+      name: .NSSystemTimeZoneDidChange,
+      object: nil
+    )
   }
 
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -172,11 +181,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   @MainActor
   func updateDateRefreshTimer() {
-    if AppPreferences.General.menuBarIcon == .custom {
+    switch AppPreferences.General.menuBarIcon {
+    case .filledDate, .outlinedDate:
+      dateRefreshTimer?.dateFormat = "d"
+    case .custom:
       dateRefreshTimer?.dateFormat = AppPreferences.General.customDateFormat
-    } else {
+    case .calendar, .systemSymbol:
       dateRefreshTimer?.dateFormat = nil
     }
+  }
+
+  @MainActor
+  func updateTimeZone() {
+    applyConfiguredTimeZone()
+    CalendarManager.default.clearCaches()
+    presentedPopover?.close()
+    updateDateRefreshTimer()
+    updateMenuBarIcon(needsLayout: true)
   }
 
   @MainActor
@@ -261,11 +282,24 @@ extension AppDelegate: NSPopoverDelegate {
 
 @MainActor
 private extension AppDelegate {
+  func applyConfiguredTimeZone() {
+    NSTimeZone.default = AppPreferences.General.fixedTimeZone?.timeZone ?? NSTimeZone.system
+  }
+
   // periphery:ignore:parameters notification
   @objc func calendarDayDidChange(_ notification: Notification) {
     DispatchQueue.main.async {
       self.updateMenuBarIcon()
     }
+  }
+
+  // periphery:ignore:parameters notification
+  @objc func systemTimeZoneDidChange(_ notification: Notification) {
+    guard AppPreferences.General.fixedTimeZone == nil else {
+      return
+    }
+
+    updateTimeZone()
   }
 
   // periphery:ignore:parameters notification

@@ -546,19 +546,70 @@
         }
       }
     },
-    "Date & Time…" : {
-      "comment" : "[Menu] Open the system Date & Time settings pane",
+    "Date & Time" : {
+      "comment" : "[Menu] Configure the app time zone or open the system Date & Time settings pane",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日期与时间…"
+            "value" : "日期与时间"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日期與時間…"
+            "value" : "日期與時間"
+          }
+        }
+      }
+    },
+    "Follow System Time Zone" : {
+      "comment" : "[Menu] Use the system-configured time zone",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随系统时区"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟隨系統時區"
+          }
+        }
+      }
+    },
+    "Open Date & Time Settings…" : {
+      "comment" : "[Menu] Open the system Date & Time settings pane",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开日期与时间设置…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開日期與時間設定…"
+          }
+        }
+      }
+    },
+    "UTC Offset" : {
+      "comment" : "[Menu] Choose a fixed UTC offset for the app",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTC 偏移"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTC 偏移"
           }
         }
       }

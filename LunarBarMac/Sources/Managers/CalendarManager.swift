@@ -121,6 +121,10 @@ final class CalendarManager {
 // MARK: - Caching
 
 extension CalendarManager {
+  func clearCaches() {
+    memoryCache.removeAll()
+  }
+
   func caches(from startDate: Date, to endDate: Date) -> [EKCalendarItem]? {
     memoryCache[DateRange(start: startDate, end: endDate)]
   }

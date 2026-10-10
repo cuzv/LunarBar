@@ -24,7 +24,11 @@ public extension Calendar {
   }
 
   /// Returns a lunar calendar, basically the Chinese calendar.
-  static let lunar = Self(identifier: .chinese)
+  static var lunar: Self {
+    var calendar = Self(identifier: .chinese)
+    calendar.timeZone = solar.timeZone
+    return calendar
+  }
 
   /**
    In most calendars, this should be just 7, but this is not always true.

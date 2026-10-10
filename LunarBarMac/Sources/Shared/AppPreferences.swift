@@ -39,6 +39,17 @@ enum AppPreferences {
 
     @Storage(key: "general.content-scale", defaultValue: .default)
     static var contentScale: ContentScale
+
+    @Storage(key: "general.fixed-time-zone", defaultValue: nil)
+    static var fixedTimeZone: FixedTimeZone? {
+      didSet {
+        guard let delegate = NSApp.delegate as? AppDelegate else {
+          return Logger.assertFail("Unexpected NSApp.delegate was found")
+        }
+
+        delegate.updateTimeZone()
+      }
+    }
   }
 
   enum Calendar {
