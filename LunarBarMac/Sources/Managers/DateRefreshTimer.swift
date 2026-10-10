@@ -32,6 +32,7 @@ final class DateRefreshTimer {
   }
 
   private var timer: Timer?
+  private var granularity: Granularity?
   private var onTick: (() -> Void)
 }
 
@@ -47,33 +48,39 @@ private extension DateRefreshTimer {
       return
     }
 
-    guard let fireDate = granularity.nextFireDate else {
+    self.granularity = granularity
+    onTick()
+    scheduleNextTick()
+  }
+
+  func scheduleNextTick() {
+    guard let granularity, let fireDate = granularity.nextFireDate(after: .now) else {
       return
     }
 
     timer = Timer(
       fireAt: fireDate,
-      interval: granularity.tickInterval,
+      interval: 0,
       target: self,
       selector: #selector(handleTick),
       userInfo: nil,
-      repeats: true
+      repeats: false
     )
 
     if let timer = timer {
       RunLoop.main.add(timer, forMode: .common)
     }
-
-    onTick()
   }
 
   func stopTicking() {
     timer?.invalidate()
     timer = nil
+    granularity = nil
   }
 
   @objc func handleTick() {
     onTick()
+    scheduleNextTick()
   }
 }
 
@@ -112,9 +119,9 @@ private enum Granularity: CaseIterable {
     }
   }
 
-  var nextFireDate: Date? {
+  func nextFireDate(after date: Date) -> Date? {
     Calendar.solar.nextDate(
-      after: Date.now,
+      after: date,
       matching: {
         switch self {
         case .second: return DateComponents(nanosecond: 0)
